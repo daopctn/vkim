@@ -1,0 +1,138 @@
+return {
+  {
+    "williamboman/mason.nvim",
+    config = function()
+      require("mason").setup()
+    end
+  },
+  {
+    "williamboman/mason-lspconfig.nvim",
+    config = function()
+      -- Skip ensure_installed if mason packages are already present (avoids failed
+      -- download attempts when running without internet after an offline restore).
+      local mason_pkg_dir = vim.fn.stdpath("data") .. "/mason/packages"
+      local has_mason_packages = #vim.fn.glob(mason_pkg_dir .. "/*", false, true) > 0
+
+      require("mason-lspconfig").setup({
+        ensure_installed = has_mason_packages and {} or {
+          "lua_ls",           -- Lua
+          "pyright",          -- Python
+          "clangd",           -- C/C++
+          "rust_analyzer",    -- Rust
+          "ts_ls",            -- TypeScript/JavaScript
+          "bashls",           -- Bash
+          "jsonls",           -- JSON
+          "yamlls",           -- YAML
+        },
+      })
+    end,
+    dependencies = {
+      "williamboman/mason.nvim",
+      "neovim/nvim-lspconfig",
+    },
+  },
+  {
+    "neovim/nvim-lspconfig",
+    config = function()
+      vim.lsp.config("lua_ls", {
+        settings = {
+          Lua = {
+            diagnostics = { globals = { "vim" } },
+          },
+        },
+      })
+
+      vim.lsp.config("rust_analyzer", {})
+
+      vim.lsp.config("clangd", {
+        cmd = {
+          "clangd",
+          "--background-index",
+          "--clang-tidy",
+          "--header-insertion=iwyu",
+          "--completion-style=detailed",
+          "--function-arg-placeholders=true",
+        },
+      })
+
+      vim.lsp.config("pyright", {
+        settings = {
+          python = {
+            analysis = {
+              autoSearchPaths = true,
+              diagnosticMode = "workspace",
+              useLibraryCodeForTypes = true,
+            },
+          },
+        },
+      })
+
+      vim.lsp.config("ts_ls", {})
+      vim.lsp.config("bashls", {})
+      vim.lsp.config("jsonls", {})
+      vim.lsp.config("yamlls", {})
+
+      vim.lsp.enable({
+        "lua_ls",
+        "rust_analyzer",
+        "clangd",
+        "pyright",
+        "ts_ls",
+        "bashls",
+        "jsonls",
+        "yamlls",
+      })
+
+      -- Diagnostic float window background
+      vim.api.nvim_set_hl(0, "NormalFloat", { fg = "#f8f8f2", bg = "#1e1f29" })
+      vim.api.nvim_set_hl(0, "FloatBorder", { fg = "#6272a4", bg = "#1e1f29" })
+
+      -- Show diagnostic messages as virtual text and in float
+      vim.diagnostic.config({
+        virtual_text = true,
+        signs = true,
+        underline = true,
+        update_in_insert = false,
+        float = {
+          border = "rounded",
+          source = true,
+        },
+      })
+
+      -- Document highlight on cursor hold
+      vim.api.nvim_create_autocmd("LspAttach", {
+        callback = function(args)
+          local client = vim.lsp.get_client_by_id(args.data.client_id)
+          if client and client.supports_method("textDocument/documentHighlight") then
+            local group = vim.api.nvim_create_augroup("lsp_highlight_" .. args.buf, { clear = true })
+            vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
+              buffer = args.buf,
+              group = group,
+              callback = vim.lsp.buf.document_highlight,
+            })
+            vim.api.nvim_create_autocmd("CursorMoved", {
+              buffer = args.buf,
+              group = group,
+              callback = vim.lsp.buf.clear_references,
+            })
+          end
+        end,
+      })
+      vim.opt.updatetime = 400
+      vim.api.nvim_set_hl(0, "LspReferenceText",  { bg = "#1c2128", underline = true })
+      vim.api.nvim_set_hl(0, "LspReferenceRead",  { bg = "#1c2128", underline = true })
+      vim.api.nvim_set_hl(0, "LspReferenceWrite", { bg = "#1c2128", underline = true, bold = true })
+
+      vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
+      vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+      vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+      vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
+      vim.keymap.set({ 'n', 'v' }, '<leader>ca', vim.lsp.buf.code_action, opts)
+      vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
+      vim.keymap.set('n', 'gl', vim.diagnostic.open_float, { desc = "Show diagnostic" })
+      vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = "Prev diagnostic" })
+      vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = "Next diagnostic" })
+
+    end,
+  },
+}

@@ -1,0 +1,17 @@
+vim.api.nvim_set_hl(0, "Normal",      { bg = "none" })
+vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
+vim.api.nvim_set_hl(0, "NormalNC",    { bg = "none" })
+vim.api.nvim_set_hl(0, "SignColumn",  { bg = "none" })
+vim.api.nvim_set_hl(0, "LineNr",      { bg = "none" })
+vim.api.nvim_set_hl(0, "Cursor",                  { bg = "#4a9eff", fg = "#0d1117" })
+vim.api.nvim_set_hl(0, "Visual",                  { bg = "#2d5a8e", fg = "none" })
+vim.api.nvim_set_hl(0, "VisualNOS",               { bg = "#2d5a8e", fg = "none" })
+
+-- Preprocessor directives (#define, #include, #ifdef...)
+vim.api.nvim_set_hl(0, "@keyword.directive",        { fg = "#e09a5a", bold = true })
+vim.api.nvim_set_hl(0, "@keyword.directive.define", { fg = "#e09a5a", bold = true })
+vim.api.nvim_set_hl(0, "@constant.macro",           { fg = "#d4a574" })
+
+vim.api.nvim_set_hl(0, "@punctuation.bracket",    { fg = "#b9c1cb" })
+vim.api.nvim_set_hl(0, "@punctuation.delimiter",  { fg = "#b9c1cb" })
+vim.api.nvim_set_hl(0, "@punctuation.special",    { fg = "#b9c1cb" })

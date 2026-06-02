@@ -1,0 +1,66 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Package AppImage
+        run: bash scripts/build-linux-release.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux
+          path: dist/Vkim-x86_64.AppImage
+
+  build-macos:
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [arm64, x86_64]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build macOS ${{ matrix.arch }}
+        run: bash scripts/build-macos-release.sh ${{ matrix.arch }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos-${{ matrix.arch }}
+          path: dist/vkim-macos-${{ matrix.arch }}.tar.gz
+
+  build-windows:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+          cache-dependency-path: launcher/windows/go.mod
+      - name: Build Windows zip
+        run: bash scripts/build-windows-release.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: dist/vkim-windows-x64.zip
+
+  release:
+    needs: [build-linux, build-macos, build-windows]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/Vkim-x86_64.AppImage
+            dist/vkim-macos-arm64.tar.gz
+            dist/vkim-macos-x86_64.tar.gz
+            dist/vkim-windows-x64.zip
+          generate_release_notes: true

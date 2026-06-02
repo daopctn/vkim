@@ -1,11 +1,26 @@
+-- Platform detection (must be first — plugins read these globals)
+vim.g.vkim_is_windows = vim.fn.has("win32") == 1 or vim.fn.has("win64") == 1
+vim.g.vkim_is_mac     = vim.fn.has("mac") == 1
+
+-- Windows shell setup
+if vim.g.vkim_is_windows then
+  local shell = vim.fn.executable("pwsh") == 1 and "pwsh" or "powershell"
+  vim.opt.shell        = shell
+  vim.opt.shellcmdflag = "-NoLogo -NonInteractive -Command"
+  vim.opt.shellxquote  = ""
+  vim.opt.shellquote   = ""
+  vim.opt.shellredir   = "2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode"
+  vim.opt.shellpipe    = "2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode"
+end
+
 vim.cmd("set expandtab")
 vim.cmd("set tabstop=2")
 vim.cmd("set softtabstop=2")
 vim.cmd("set shiftwidth=2")
 vim.opt.number = true
 vim.opt.relativenumber = false
-vim.opt.numberwidth = 2  -- Set line number column width to 2
-vim.opt.background = "dark"  -- Options: "dark" or "light"
+vim.opt.numberwidth = 2
+vim.opt.background = "dark"
 vim.opt.autoread = true
 vim.opt.signcolumn = "yes"
 vim.opt.diffopt:append("vertical")
@@ -19,9 +34,7 @@ vim.api.nvim_create_autocmd("FileType", {
 -- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath .. "/lua/lazy/init.lua") then
-  -- lazy.nvim not found (not installed and not restored from offline bundle)
-  -- Try to clone from GitHub
-  vim.fn.system({ "rm", "-rf", lazypath })
+  -- lazy.nvim not found — clone from GitHub (cross-platform: no rm -rf)
   local lazyrepo = "https://github.com/folke/lazy.nvim.git"
   local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
   if vim.v.shell_error ~= 0 then

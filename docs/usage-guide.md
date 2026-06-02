@@ -208,3 +208,27 @@ Sections displayed:
 | XML | xmllint | — |
 
 All installed via Mason. Format on save runs automatically on `BufWritePre`.
+
+> **Windows note:** `xmllint`, `cmake_format`, and `cmake_lint` are skipped on Windows if the executables are not found — no crash, just silently omitted.
+
+---
+
+## Platform Notes
+
+### macOS
+
+- **Terminal:** Ghostty is recommended. Config installs to `~/.config/ghostty/config` via `install-macos.sh`.
+- **Font:** Run `install-macos.sh` to copy fonts to `~/Library/Fonts/`, or drag `.ttf` files there manually.
+- **Starship prompt:** Config installs to `~/.config/starship.toml`. Install starship: `curl -sS https://starship.rs/install.sh | sh`
+- **Quarantine:** If macOS blocks the nvim binary, clear it: `xattr -d com.apple.quarantine ./bin/*/bin/nvim`
+- **Clipboard:** Auto-detected via `pbcopy`/`pbpaste` — no config needed.
+
+### Windows
+
+- **git required:** lazy.nvim needs git to install plugins. Install from [git-scm.com](https://git-scm.com/download/win) — choose "Git from the command line and also from 3rd-party software" during setup.
+- **Terminal:** [Windows Terminal](https://aka.ms/terminal) recommended. Run `setup-windows-terminal.ps1` once to add a vkim profile with correct font.
+- **Font:** Open `fonts\` folder → select all `.ttf` → right-click → **Install** (user install, no admin).
+- **Shell:** vkim auto-detects `pwsh` (PowerShell 7) first, falls back to `powershell` (PowerShell 5). Install PowerShell 7 for best experience: https://aka.ms/powershell
+- **Mason LSP tools:** Most LSPs download as standalone binaries — no node/python needed globally. Formatters (black, isort, flake8) require Python in PATH; TypeScript tools (ts_ls, prettier) require Node in PATH. If absent, those tools are silently skipped.
+- **Path length:** Extract vkim to a short path (e.g. `C:\vkim\`). Mason installs deep plugin trees that can hit Windows' 260-char limit.
+- **Clipboard:** Auto-detected — Neovim uses Windows clipboard natively, no config needed.

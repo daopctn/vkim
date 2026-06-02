@@ -1,24 +1,45 @@
 # vkim
 
-A portable Neovim distribution for C/C++/Python/Rust/TypeScript/Bash developers. Self-contained AppImage with opinionated config, terminal configs, and LSP support out of the box.
+A portable Neovim distribution for C/C++/Python/Rust/TypeScript/Bash developers. Opinionated config, terminal configs, and LSP support out of the box. All data lives next to the launcher — nothing written to system config dirs.
 
 **[Full Usage Guide →](docs/usage-guide.md)** — all keybindings, plugin usage, LSP, completion, git.
 
 ## Quick Start
+
+### Linux (x86_64)
 
 ```bash
 chmod +x Vkim-x86_64.AppImage
 ./Vkim-x86_64.AppImage
 ```
 
-That's it. First launch auto-provisions everything:
-- Neovim config copied to `./config/vkim/`
-- Fonts unzipped to `./fonts/`
-- Terminal configs (ghostty, btop, terminator, clangd) copied to `./config/`
+### macOS (arm64 / x86_64)
+
+```bash
+tar -xzf vkim-macos-arm64.tar.gz   # or vkim-macos-x86_64.tar.gz
+cd vkim-macos-arm64
+./vkim.sh
+```
+
+> **First run:** macOS may block the binary. Go to **System Settings → Privacy & Security → Open Anyway**, or run:
+> ```bash
+> xattr -d com.apple.quarantine ./bin/*/bin/nvim
+> ```
+
+### Windows (x64)
+
+1. Extract `vkim-windows-x64.zip` to a short path — e.g. `C:\vkim\`
+2. Double-click `vkim.exe`
+
+> **First run:** Windows SmartScreen may warn — click **More info → Run anyway**. The binary is unsigned.
+> **Font icons:** Open the `fonts\` folder, select all `.ttf` files, right-click → **Install**.
+> **Windows Terminal profile:** Run `setup-windows-terminal.ps1` once to add a vkim profile.
+
+First launch on all platforms auto-provisions everything:
 - Plugins installed via lazy.nvim
 - LSP servers installed via Mason
 
-All data lives next to the AppImage — nothing written to `~/.config`.
+All data lives next to the launcher — nothing written to `~/.config` or `%APPDATA%`.
 
 ## Languages & LSP Support
 
@@ -107,20 +128,49 @@ Set colorscheme in `lua/plugins/dracula.lua` or `lua/plugins/manga-mono.lua`. Ed
 
 ## Troubleshooting
 
-**Plugins not loading**: Delete `./data/vkim/lazy/` next to the AppImage and relaunch.
+**Plugins not loading**: Delete `./data/vkim/lazy/` next to the launcher and relaunch.
 
 **LSP not working**: Run `:Mason` inside Neovim to install language servers manually.
 
-**Icons missing**: Fonts auto-install to `./fonts/` on first run — verify terminal supports true color.
+**Icons missing**: Install fonts from the `fonts/` folder, then configure your terminal to use `CaskaydiaCove Nerd Font Mono`.
 
 **Format on save not working**: Check `./config/vkim/lua/plugins/none-ls.lua`.
 
+**macOS: "cannot be opened because it is from an unidentified developer"**
+Go to **System Settings → Privacy & Security → Open Anyway**, or clear quarantine:
+```bash
+xattr -d com.apple.quarantine ./bin/*/bin/nvim
+```
+
+**Windows: SmartScreen blocks vkim.exe**
+Click **More info → Run anyway**. The binary is unsigned open-source software.
+
+**Windows: Mason install fails with path errors**
+Extract to a short path like `C:\vkim\`. Windows has a 260-char path limit by default.
+To enable long paths (requires admin):
+```
+reg add HKLM\SYSTEM\CurrentControlSet\Control\FileSystem /v LongPathsEnabled /t REG_DWORD /d 1
+```
+
+**Windows: Plugins not installing / "git not found"**
+Install git: [git-scm.com/download/win](https://git-scm.com/download/win). During install, choose "Git from the command line and also from 3rd-party software" so git is in PATH.
+
+**Windows: PowerShell execution policy blocks setup-windows-terminal.ps1**
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+```
+
 ## Requirements
 
-- Linux x86_64 or AppImage-capable system
-- 100MB free disk space (AppImage + plugins)
-- Ghostty (optional): macOS 13.5+ / Linux with Wayland or X11
-- CaskaydiaCove Nerd Font (for icons)
+| Platform | Requirements |
+|----------|-------------|
+| Linux    | x86_64, FUSE 2 (AppImage), true-color terminal, **git** |
+| macOS    | 13+ (Ventura), arm64 or x86_64, true-color terminal, **git** (macOS will prompt to install Xcode Command Line Tools on first run if missing) |
+| Windows  | Windows 10/11 x64, **git** ([git-scm.com](https://git-scm.com/download/win)), Windows Terminal recommended — extract to short path e.g. `C:\vkim\` |
+
+All platforms: ~100MB disk space (binary + plugins). CaskaydiaCove Nerd Font included in `fonts/`.
+
+> **Why git?** lazy.nvim uses git to install and update plugins on first launch. LSP servers are downloaded by Mason automatically — no extra tools needed.
 
 ## License
 

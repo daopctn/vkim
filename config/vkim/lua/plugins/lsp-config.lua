@@ -44,6 +44,22 @@ return {
 
       vim.lsp.config("rust_analyzer", {})
 
+      -- Build --query-driver list so clangd can find system headers without compile_commands.json.
+      -- clangd queries the matched compiler for its include paths automatically.
+      local query_drivers = {
+        -- Linux / macOS
+        "/usr/bin/g++", "/usr/bin/gcc", "/usr/bin/clang++", "/usr/bin/clang",
+        "/usr/local/bin/clang++", "/usr/local/bin/clang",
+        -- Homebrew (macOS)
+        "/opt/homebrew/bin/g++", "/opt/homebrew/bin/clang++",
+        -- MinGW (Windows — common install locations)
+        "C:\\\\msys64\\\\mingw64\\\\bin\\\\g++.exe",
+        "C:\\\\msys64\\\\ucrt64\\\\bin\\\\g++.exe",
+        "C:\\\\msys64\\\\mingw64\\\\bin\\\\gcc.exe",
+        "C:\\\\mingw64\\\\bin\\\\g++.exe",
+        "C:\\\\mingw-w64\\\\bin\\\\g++.exe",
+      }
+
       vim.lsp.config("clangd", {
         cmd = {
           "clangd",
@@ -52,6 +68,7 @@ return {
           "--header-insertion=iwyu",
           "--completion-style=detailed",
           "--function-arg-placeholders=true",
+          "--query-driver=" .. table.concat(query_drivers, ","),
         },
       })
 

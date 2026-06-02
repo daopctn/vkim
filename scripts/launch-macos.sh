@@ -17,4 +17,9 @@ export XDG_DATA_HOME="$SCRIPT_DIR/data"
 export XDG_STATE_HOME="$SCRIPT_DIR/state"
 export XDG_CACHE_HOME="$SCRIPT_DIR/cache"
 
+# Expose Xcode SDK to clangd so it finds system headers without extra config
+if command -v xcrun &>/dev/null; then
+  _sdk=$(xcrun --sdk macosx --show-sdk-path 2>/dev/null) && export SDKROOT="$_sdk" || true
+fi
+
 exec "$NVIM_BIN" "$@"

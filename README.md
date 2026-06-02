@@ -4,44 +4,19 @@ A portable Neovim distribution for C/C++/Python/Rust/TypeScript/Bash developers.
 
 ## Quick Start
 
-### Launch Neovim
-
-Link the config and run:
-
 ```bash
-ln -sf /path/to/vkim/config/vkim ~/.config/vkim
-NVIM_APPNAME=vkim ./Vkim-x86_64.AppImage
+chmod +x Vkim-x86_64.AppImage
+./Vkim-x86_64.AppImage
 ```
 
-Or use XDG_CONFIG_HOME directly:
+That's it. First launch auto-provisions everything:
+- Neovim config copied to `./config/vkim/`
+- Fonts unzipped to `./fonts/`
+- Terminal configs (ghostty, btop, terminator, clangd) copied to `./config/`
+- Plugins installed via lazy.nvim
+- LSP servers installed via Mason
 
-```bash
-XDG_CONFIG_HOME=/path/to/vkim/config NVIM_APPNAME=vkim ./Vkim-x86_64.AppImage
-```
-
-First launch auto-installs plugins (lazy.nvim) and LSP servers (Mason).
-
-### Setup Terminal Configs
-
-Copy desired configs to your home:
-
-```bash
-# Ghostty terminal (recommended) — includes manga-mono theme
-cp config/ghostty/config ~/.config/ghostty/config
-cp -r config/ghostty/themes ~/.config/ghostty/themes
-cp config/ghostty/terminal-background.jpeg ~/.config/ghostty/
-
-# Starship prompt
-cp config/starship.toml ~/.config/starship.toml
-
-# btop resource monitor
-cp config/btop/btop.conf ~/.config/btop/btop.conf
-
-# Terminator terminal
-cp config/terminator/config ~/.config/terminator/config
-```
-
-Requires **CaskaydiaCove Nerd Font** for icons in ghostty and lualine. Install via your package manager or download from [Nerd Fonts](https://www.nerdfonts.com/).
+All data lives next to the AppImage — nothing written to `~/.config`.
 
 ## Languages & LSP Support
 
@@ -130,13 +105,13 @@ Set colorscheme in `lua/plugins/dracula.lua` or `lua/plugins/manga-mono.lua`. Ed
 
 ## Troubleshooting
 
-**Plugins not loading**: Delete `~/.local/share/nvim/lazy/` and relaunch to reinstall.
+**Plugins not loading**: Delete `./data/vkim/lazy/` next to the AppImage and relaunch.
 
-**LSP not working**: Run `:Mason` in Neovim to install language servers.
+**LSP not working**: Run `:Mason` inside Neovim to install language servers manually.
 
-**Icons missing**: Install CaskaydiaCove Nerd Font and verify `TERM` supports true color.
+**Icons missing**: Fonts auto-install to `./fonts/` on first run — verify terminal supports true color.
 
-**Format on save not working**: Check none-ls config in `lua/plugins/none-ls.lua`.
+**Format on save not working**: Check `./config/vkim/lua/plugins/none-ls.lua`.
 
 ## Requirements
 

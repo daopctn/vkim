@@ -152,6 +152,9 @@ To enable long paths (requires admin):
 reg add HKLM\SYSTEM\CurrentControlSet\Control\FileSystem /v LongPathsEnabled /t REG_DWORD /d 1
 ```
 
+**Windows: Plugins not installing / "git not found"**
+Install git: [git-scm.com/download/win](https://git-scm.com/download/win). During install, choose "Git from the command line and also from 3rd-party software" so git is in PATH.
+
 **Windows: PowerShell execution policy blocks setup-windows-terminal.ps1**
 ```powershell
 Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
@@ -161,11 +164,13 @@ Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 
 | Platform | Requirements |
 |----------|-------------|
-| Linux    | x86_64, FUSE 2 (AppImage), true-color terminal |
-| macOS    | 13+ (Ventura), arm64 or x86_64, true-color terminal |
-| Windows  | Windows 10/11 x64, Windows Terminal recommended — extract to short path e.g. `C:\vkim\` |
+| Linux    | x86_64, FUSE 2 (AppImage), true-color terminal, **git** |
+| macOS    | 13+ (Ventura), arm64 or x86_64, true-color terminal, **git** (macOS will prompt to install Xcode Command Line Tools on first run if missing) |
+| Windows  | Windows 10/11 x64, **git** ([git-scm.com](https://git-scm.com/download/win)), Windows Terminal recommended — extract to short path e.g. `C:\vkim\` |
 
 All platforms: ~100MB disk space (binary + plugins). CaskaydiaCove Nerd Font included in `fonts/`.
+
+> **Why git?** lazy.nvim uses git to install and update plugins on first launch. LSP servers are downloaded by Mason automatically — no extra tools needed.
 
 ## License
 

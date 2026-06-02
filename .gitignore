@@ -106,7 +106,6 @@ worktrees/
 CHANGELOG.md
 GEMINI.md
 LICENSE
-docs/
 guide/
 package.json
 package-lock.json

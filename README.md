@@ -2,6 +2,8 @@
 
 A portable Neovim distribution for C/C++/Python/Rust/TypeScript/Bash developers. Self-contained AppImage with opinionated config, terminal configs, and LSP support out of the box.
 
+**[Full Usage Guide →](docs/usage-guide.md)** — all keybindings, plugin usage, LSP, completion, git.
+
 ## Quick Start
 
 ```bash

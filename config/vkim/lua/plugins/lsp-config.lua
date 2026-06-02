@@ -44,20 +44,30 @@ return {
 
       vim.lsp.config("rust_analyzer", {})
 
-      -- Build --query-driver list so clangd can find system headers without compile_commands.json.
-      -- clangd queries the matched compiler for its include paths automatically.
+      -- Build --query-driver list: clangd queries matched compiler for include paths.
+      -- Globs cover versioned compilers (g++-12, clang++-17, etc.) automatically.
       local query_drivers = {
-        -- Linux / macOS
-        "/usr/bin/g++", "/usr/bin/gcc", "/usr/bin/clang++", "/usr/bin/clang",
-        "/usr/local/bin/clang++", "/usr/local/bin/clang",
-        -- Homebrew (macOS)
-        "/opt/homebrew/bin/g++", "/opt/homebrew/bin/clang++",
-        -- MinGW (Windows — common install locations)
+        -- Linux: versioned + unversioned, cross-compilers
+        "/usr/bin/g++*", "/usr/bin/gcc*",
+        "/usr/bin/clang++*", "/usr/bin/clang*",
+        "/usr/local/bin/g++*", "/usr/local/bin/gcc*",
+        "/usr/local/bin/clang++*", "/usr/local/bin/clang*",
+        "/usr/bin/*-g++", "/usr/bin/*-gcc",      -- cross-compilers (arm, aarch64, etc.)
+        -- macOS Homebrew
+        "/opt/homebrew/bin/g++*", "/opt/homebrew/bin/gcc*",
+        "/opt/homebrew/bin/clang++*",
+        "/opt/homebrew/opt/llvm/bin/clang++*",   -- Homebrew LLVM
+        -- macOS Xcode CLT direct path
+        "/Library/Developer/CommandLineTools/usr/bin/clang++",
+        "/Library/Developer/CommandLineTools/usr/bin/clang",
+        -- Windows MSYS2 (mingw64, ucrt64, clang64 environments)
         "C:\\\\msys64\\\\mingw64\\\\bin\\\\g++.exe",
-        "C:\\\\msys64\\\\ucrt64\\\\bin\\\\g++.exe",
         "C:\\\\msys64\\\\mingw64\\\\bin\\\\gcc.exe",
+        "C:\\\\msys64\\\\ucrt64\\\\bin\\\\g++.exe",
+        "C:\\\\msys64\\\\clang64\\\\bin\\\\clang++.exe",
         "C:\\\\mingw64\\\\bin\\\\g++.exe",
-        "C:\\\\mingw-w64\\\\bin\\\\g++.exe",
+        -- Windows LLVM installer
+        "C:\\\\Program Files\\\\LLVM\\\\bin\\\\clang++.exe",
       }
 
       vim.lsp.config("clangd", {
